@@ -84,6 +84,7 @@ TARGET_SPECIFIC_HEADER_PATH := device/htc/memul/include
 TARGET_PREBUILT_KERNEL := device/htc/memul-kernel/kernel
 BOARD_CUSTOM_BOOTIMG_MK := device/htc/memul/mkbootimg.mk
 BOARD_KERNEL_BASE := 0x00000000
+#BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
 BOARD_KERNEL_CMDLINE := console=ttyHSL0,115200,n8 androidboot.hardware=qcom user_debug=31 ehci-hcd.park=3
 BOARD_KERNEL_PAGESIZE := 2048
 BOARD_KERNEL_SEPARATED_DT := true
@@ -112,14 +113,19 @@ TARGET_RECOVERY_DEVICE_MODULES += chargeled
 TARGET_RECOVERY_FSTAB := device/htc/memul/rootdir/etc/fstab.qcom
 TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
 TARGET_USERIMAGES_USE_EXT4 := true
-TARGET_USERIMAGES_USE_F2FS := true
+# DON'T USE F2FS IF BUILDING ON MAC
+ifeq ($(HOST_OS),linux)
+ TARGET_USERIMAGES_USE_F2FS := true
+else
+TARGET_USERIMAGES_USE_F2FS := false
+endif
 
 # RIL
 BOARD_PROVIDES_LIBRIL := true
 
 # SELinux
 -include device/qcom/sepolicy/sepolicy.mk
-BOARD_SEPOLICY_DIRS += device/htc/memul/sepolicy
+#BOARD_SEPOLICY_DIRS += device/htc/memul/sepolicy
 
 
 # Time
