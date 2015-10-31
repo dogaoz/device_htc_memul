@@ -52,8 +52,8 @@ TARGET_BOOTLOADER_BOARD_NAME := memul
 TARGET_NO_BOOTLOADER := true
 
 # Camera
-COMMON_GLOBAL_CFLAGS += -DPROPERTY_PERMS_APPEND='{"htc.camera.sensor.", AID_CAMERA, 0}, {"camera.4k2k.", AID_MEDIA, 0}, {"persist.camera.", AID_MEDIA, 0},'
-USE_DEVICE_SPECIFIC_CAMERA := true
+#COMMON_GLOBAL_CFLAGS += -DPROPERTY_PERMS_APPEND='{"htc.camera.sensor.", AID_CAMERA, 0}, {"camera.4k2k.", AID_MEDIA, 0}, {"persist.camera.", AID_MEDIA, 0},'
+#USE_DEVICE_SPECIFIC_CAMERA := true
 
 # CMHW
 BOARD_HARDWARE_CLASS := device/htc/memul/cmhw
@@ -81,7 +81,6 @@ USE_OPENGL_RENDERER := true
 TARGET_SPECIFIC_HEADER_PATH := device/htc/memul/include
 
 # Kernel
-TARGET_PREBUILT_KERNEL := device/htc/memul-kernel/kernel
 BOARD_CUSTOM_BOOTIMG_MK := device/htc/memul/mkbootimg.mk
 BOARD_KERNEL_BASE := 0x00000000
 #BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
@@ -90,7 +89,12 @@ BOARD_KERNEL_PAGESIZE := 2048
 BOARD_KERNEL_SEPARATED_DT := true
 BOARD_MKBOOTIMG_ARGS := --kernel_offset 0x00008000 --ramdisk_offset 0x02008000 --tags_offset 0x01e00000
 #TARGET_KERNEL_CONFIG := cm_memul_defconfig
-#TARGET_KERNEL_SOURCE := kernel/htc/msm8974
+#TARGET_KERNEL_SOURCE := kernel/
+
+#TARGET_PREBUILT_KERNEL := device/htc/memul-kernel/kernel
+#PRODUCT_COPY_FILES := \
+#    $(TARGET_PREBUILT_KERNEL):kernel
+    
 # Lights
 TARGET_PROVIDES_LIBLIGHT := true
 
@@ -113,19 +117,14 @@ TARGET_RECOVERY_DEVICE_MODULES += chargeled
 TARGET_RECOVERY_FSTAB := device/htc/memul/rootdir/etc/fstab.qcom
 TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
 TARGET_USERIMAGES_USE_EXT4 := true
-# DON'T USE F2FS IF BUILDING ON MAC
-ifeq ($(HOST_OS),linux)
- TARGET_USERIMAGES_USE_F2FS := true
-else
-TARGET_USERIMAGES_USE_F2FS := false
-endif
+
 
 # RIL
 BOARD_PROVIDES_LIBRIL := true
 
 # SELinux
 -include device/qcom/sepolicy/sepolicy.mk
-#BOARD_SEPOLICY_DIRS += device/htc/memul/sepolicy
+BOARD_SEPOLICY_DIRS += device/htc/memul/sepolicy
 
 
 # Time

@@ -50,25 +50,28 @@ static int camera_get_camera_info(int camera_id, struct camera_info *info);
 static struct hw_module_methods_t camera_module_methods = {
     .open = camera_device_open,
 };
+static hw_module_t camera_common = {
+    tag: HARDWARE_MODULE_TAG,
+    module_api_version: CAMERA_MODULE_API_VERSION_1_0,
+    hal_api_version: HARDWARE_HAL_API_VERSION,
+    id: CAMERA_HARDWARE_MODULE_ID,
+    name: "Memul Camera Wrapper",
+    author: "Doga Ozkaracaabatlioglu",
+    methods: &camera_module_methods,
+    dso: NULL,
+    reserved:  {0},
+};
 
 camera_module_t HAL_MODULE_INFO_SYM = {
-    .common = {
-         .tag = HARDWARE_MODULE_TAG,
-         .module_api_version = CAMERA_MODULE_API_VERSION_1_0,
-         .hal_api_version = HARDWARE_HAL_API_VERSION,
-         .id = CAMERA_HARDWARE_MODULE_ID,
-         .name = "MEMUL Camera Wrapper",
-         .author = "The CyanogenMod Project",
-         .methods = &camera_module_methods,
-         .dso = NULL, /* remove compilation warnings */
-         .reserved = {0}, /* remove compilation warnings */
-    },
-    .get_number_of_cameras = camera_get_number_of_cameras,
-    .get_camera_info = camera_get_camera_info,
-    .set_callbacks = NULL, /* remove compilation warnings */
-    .get_vendor_tag_ops = NULL, /* remove compilation warnings */
-    .open_legacy = NULL, /* remove compilation warnings */
-    .reserved = {0}, /* remove compilation warnings */
+    common: camera_common,
+    get_number_of_cameras: camera_get_number_of_cameras,
+    get_camera_info: camera_get_camera_info,
+    set_callbacks: NULL,
+    get_vendor_tag_ops: NULL,
+    open_legacy: NULL,
+    set_torch_mode: NULL,
+    init: NULL,
+    reserved: {0}
 };
 
 typedef struct wrapper_camera_device {
@@ -113,9 +116,9 @@ static char *camera_fixup_getparams(int id, const char *settings)
     params.dump();
 #endif
 
-    if (params.get(android::CameraParameters::KEY_CAPTURE_MODE)) {
-        captureMode = params.get(android::CameraParameters::KEY_CAPTURE_MODE);
-    }
+   // if (params.get(android::CameraParameters::KEY_CAPTURE_MODE)) {
+   //     captureMode = params.get(android::CameraParameters::KEY_CAPTURE_MODE);
+  //  }
 
     if (params.get(android::CameraParameters::KEY_ROTATION)) {
         rotation = atoi(params.get(android::CameraParameters::KEY_ROTATION));
@@ -129,7 +132,7 @@ static char *camera_fixup_getparams(int id, const char *settings)
     params.set(android::CameraParameters::KEY_MAX_NUM_DETECTED_FACES_HW, "0");
     params.set(android::CameraParameters::KEY_MAX_NUM_DETECTED_FACES_SW, "0");
     params.set("qc-max-num-requested-faces", "0");
-    params.set(android::CameraParameters::KEY_FACE_DETECTION, "off");
+   // params.set(android::CameraParameters::KEY_FACE_DETECTION, "off");
 
     /* Advertise video HDR values */
     params.set(KEY_VIDEO_HDR_VALUES, "off,on");
@@ -160,10 +163,10 @@ static char *camera_fixup_getparams(int id, const char *settings)
     }
 
     /* Set HDR mode */
-    if (!strcmp(captureMode, "hdr")) {
-        params.set(android::CameraParameters::KEY_SCENE_MODE,
-                android::CameraParameters::SCENE_MODE_HDR);
-    }
+   // if (!strcmp(captureMode, "hdr")) {
+  //      params.set(android::CameraParameters::KEY_SCENE_MODE,
+  //              android::CameraParameters::SCENE_MODE_HDR);
+  //  }
 
 #ifdef LOG_PARAMETERS
     ALOGV("%s: fixed parameters:", __FUNCTION__);
@@ -206,25 +209,25 @@ static char *camera_fixup_setparams(int id, const char *settings)
     params.set(android::CameraParameters::KEY_MAX_NUM_DETECTED_FACES_HW, "0");
     params.set(android::CameraParameters::KEY_MAX_NUM_DETECTED_FACES_SW, "0");
     params.set("qc-max-num-requested-faces", "0");
-    params.set(android::CameraParameters::KEY_FACE_DETECTION, "off");
+   // params.set(android::CameraParameters::KEY_FACE_DETECTION, "off");
 
     /* Enable fixed fps mode */
     params.set("preview-frame-rate-mode", "frame-rate-fixed");
 
     if (!isVideo && id == 0) {
         /* Disable OIS, set continuous burst to prevent crash */
-        params.set(android::CameraParameters::KEY_CONTIBURST_TYPE, "unlimited");
-        params.set(android::CameraParameters::KEY_OIS_SUPPORT, "false");
-        params.set(android::CameraParameters::KEY_OIS_MODE, "off");
+       // params.set(android::CameraParameters::KEY_CONTIBURST_TYPE, "unlimited");
+       // params.set(android::CameraParameters::KEY_OIS_SUPPORT, "false");
+       // params.set(android::CameraParameters::KEY_OIS_MODE, "off");
 
         /* Enable HDR */
         if (!strcmp(sceneMode, android::CameraParameters::SCENE_MODE_HDR)) {
             params.set(android::CameraParameters::KEY_SCENE_MODE, "off");
-            params.set(android::CameraParameters::KEY_CAPTURE_MODE, "hdr");
+           // params.set(android::CameraParameters::KEY_CAPTURE_MODE, "hdr");
         } else {
-            params.set(android::CameraParameters::KEY_CAPTURE_MODE, "normal");
-            params.set(android::CameraParameters::KEY_ZSL, "on");
-            params.set(android::CameraParameters::KEY_CAMERA_MODE, "1");
+          //  params.set(android::CameraParameters::KEY_CAPTURE_MODE, "normal");
+           // params.set(android::CameraParameters::KEY_ZSL, "on");
+           // params.set(android::CameraParameters::KEY_CAMERA_MODE, "1");
         }
     }
 
